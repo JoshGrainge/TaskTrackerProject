@@ -1,10 +1,26 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react';
 import { ChevronDownIcon } from '@heroicons/react/20/solid';
 
+const TEST_PROFILE_ID = "6730781e41e93b3e6abd8de9";
 
 function DropMenu() {
   const [tasks, setTasks] = useState([]);
+
+  useEffect(() => {
+    async function getTasks() {
+      // TODO make this more secure by passing it in the request header with auth
+      const response = await fetch(`http://localhost:5050/tasks/${TEST_PROFILE_ID}`);
+      if (!response.ok) {
+        const message = `An error occurred: ${response.statusText}`;
+        console.error(message);
+        return;
+      }
+      const tasks = await response.json();
+      setTasks(tasks);
+    }
+    getTasks();
+  }, [tasks.length]);
 
   {/* Create task list drop down items */}
   function taskList() {
